@@ -27,13 +27,13 @@
  */
 ; (function ($) {
 
-    if (typeof moment === 'undefined') { 
+    if (typeof moment === 'undefined') {
         alert("momentjs is requried");
         throw new Error('momentjs is requried');
     };
-	
+
     var dpgId = 0,
-        
+
     pMoment = moment,
 
 // ReSharper disable once InconsistentNaming
@@ -48,7 +48,8 @@
             defaultDate: "",
             disabledDates: [],
             icons: {},
-            useStrict: false
+            useStrict: false,
+	        minutesStep: 3
         },
 
 		icons = {
@@ -65,6 +66,7 @@
             var icon = false, i, dDate, longDateFormat;
             picker.options = $.extend({}, defaults, options);
             picker.options.icons = $.extend({}, icons, picker.options.icons);
+            picker.minutesStep = picker.options.minutesStep;
 
             if (!(picker.options.pickTime || picker.options.pickDate))
                 throw new Error('Must choose at least one picker');
@@ -381,13 +383,22 @@
         },
 
         fillMinutes = function () {
-            var table = picker.widget.find('.timepicker .timepicker-minutes table'), html = '', current = 0, i, j;
+            var table   = picker.widget.find('.timepicker .timepicker-minutes table')
+              , html    = ''
+              , current = 0
+              , i
+              , j
+              , total   = 60
+              , cols    = Math.ceil(total/picker.minutesStep/picker.minutesStep)
+              , rows    = Math.ceil(total/picker.minutesStep/cols)
+            ;
+
             table.parent().hide();
-            for (i = 0; i < 5; i++) {
+            for (i = 0; i < rows; i++) {
                 html += '<tr>';
-                for (j = 0; j < 4; j += 1) {
-                    html += '<td class="minute">' + padLeft(current.toString()) + '</td>';
-                    current += 3;
+                for (j = 0; j < cols; j += 1) {
+                    html    += '<td class="minute">' + padLeft(current.toString()) + '</td>';
+                    current += picker.minutesStep;
                 }
                 html += '</tr>';
             }
@@ -747,7 +758,7 @@
 							'<li' + (collapse ? ' class="collapse in"' : '') + '>' +
 								'<div class="datepicker">' + dpGlobal.template + '</div>' +
 							'</li>' +
-							'<li class="picker-switch accordion-toggle"><a class="btn" style="width:100%"><span class="' + picker.options.icons.time + '"></span></a></li>' +
+							'<li class="picker-switch accordion-toggle"><a class="btn btn-block" ><span class="' + picker.options.icons.time + '"></span></a></li>' +
 							'<li' + (collapse ? ' class="collapse"' : '') + '>' +
 								'<div class="timepicker">' + tpGlobal.getTemplate() + '</div>' +
 							'</li>' +
