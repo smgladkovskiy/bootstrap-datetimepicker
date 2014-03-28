@@ -161,3 +161,7 @@
         }
     });
 }));
+
+dtpTranslation = {
+	closeBtn: 'Закрыть'
+};
